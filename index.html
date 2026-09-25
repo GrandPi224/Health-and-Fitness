@@ -75,6 +75,14 @@ tr:last-child td{border-bottom:0}
 .kneebox p{margin:0}
 footer{font-size:14px;color:var(--muted)}
 
+.packcount{margin:0;font-weight:700}
+.pack{border:1px solid var(--line);background:var(--panel);border-radius:8px;margin:0;padding:6px 14px 10px}
+.pack legend{font:600 14px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:0 6px}
+.pack label{display:flex;gap:12px;align-items:flex-start;min-height:44px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.pack label:last-child{border-bottom:0}
+.pack input{width:24px;height:24px;margin:1px 0 0;flex:none;accent-color:var(--start)}
+.pack input:checked+span{color:var(--muted);text-decoration:line-through}
+.packreset{display:inline-block!important}
 /* Phone portrait */
 body{-webkit-text-size-adjust:100%;overflow-x:hidden}
 .map,.prof{min-width:0}
@@ -134,6 +142,49 @@ body{-webkit-text-size-adjust:100%;overflow-x:hidden}
   </table></div>
   <div class="kneebox"><p><strong>Knee plan.</strong> Trekking poles, knee brace or sleeve, anti-inflammatories, elastic wrap. Decide at Sassafras Gap Shelter, mile 6.8: if the knee is sore, turn back there. No road crosses the trail between the start and the finish.</p></div>
 </section>
+<section aria-labelledby="h-pack">
+  <h2 id="h-pack">Packing checklist</h2>
+  <p class="note">Day hike, so no tent or sleeping gear. Tap an item to check it off. Your phone remembers your checks.</p>
+  <p class="packcount" id="packcount" aria-live="polite"></p>
+  <fieldset class="pack"><legend>Water and food</legend>
+    <label><input type="checkbox" data-k="p1"><span>Nathan water pack, bladder filled at the NOC</span></label>
+    <label><input type="checkbox" data-k="p2"><span>Water filter, for the spring at Sassafras Gap, mile 6.8</span></label>
+    <label><input type="checkbox" data-k="p3"><span>Electrolyte tabs or powder</span></label>
+    <label><input type="checkbox" data-k="p4"><span>Lunch and snacks, about 2,000 calories</span></label>
+  </fieldset>
+  <fieldset class="pack"><legend>Knee kit</legend>
+    <label><input type="checkbox" data-k="p5"><span>Trekking poles</span></label>
+    <label><input type="checkbox" data-k="p6"><span>Knee brace or sleeve</span></label>
+    <label><input type="checkbox" data-k="p7"><span>Anti-inflammatories</span></label>
+    <label><input type="checkbox" data-k="p8"><span>Elastic wrap</span></label>
+  </fieldset>
+  <fieldset class="pack"><legend>Wear</legend>
+    <label><input type="checkbox" data-k="p9"><span>Hiking shoes and hiking boots: wear one pair, leave the other in the car at Stecoah Gap</span></label>
+    <label><input type="checkbox" data-k="p10"><span>Wool hiking socks, plus one spare pair</span></label>
+    <label><input type="checkbox" data-k="p11"><span>Quick-dry shirt and shorts or pants</span></label>
+    <label><input type="checkbox" data-k="p12"><span>Light fleece or wind shirt, for Cheoah Bald</span></label>
+    <label><input type="checkbox" data-k="p13"><span>Rain shell</span></label>
+    <label><input type="checkbox" data-k="p14"><span>Cap and sunglasses</span></label>
+  </fieldset>
+  <fieldset class="pack"><legend>Safety and navigation</legend>
+    <label><input type="checkbox" data-k="p15"><span>Phone fully charged, FarOut NC section downloaded for offline use</span></label>
+    <label><input type="checkbox" data-k="p16"><span>Small battery pack and cable</span></label>
+    <label><input type="checkbox" data-k="p17"><span>Headlamp, in case you finish after sunset, about 7:25 PM</span></label>
+    <label><input type="checkbox" data-k="p18"><span>Whistle</span></label>
+    <label><input type="checkbox" data-k="p19"><span>Small first-aid kit with blister tape</span></label>
+    <label><input type="checkbox" data-k="p20"><span>Sunscreen</span></label>
+    <label><input type="checkbox" data-k="p21"><span>ID, a credit card, and some cash</span></label>
+  </fieldset>
+  <fieldset class="pack"><legend>Bathroom kit</legend>
+    <label><input type="checkbox" data-k="p22"><span>Toilet paper, trowel, hand sanitizer, zip bag to pack out</span></label>
+  </fieldset>
+  <fieldset class="pack"><legend>Shuttle and car</legend>
+    <label><input type="checkbox" data-k="p23"><span>Car keys, in a zipped pocket</span></label>
+    <label><input type="checkbox" data-k="p24"><span>Car or ride waiting at Stecoah Gap</span></label>
+    <label><input type="checkbox" data-k="p25"><span>Dry shirt, socks, and a snack left in the finish car</span></label>
+  </fieldset>
+  <button type="button" class="zoombtn packreset" id="packreset">Uncheck all</button>
+</section>
 <section aria-labelledby="h-links">
   <h2 id="h-links">Links</h2>
   <div class="links">
@@ -158,5 +209,17 @@ document.querySelectorAll('.zoombtn').forEach(function(b){
     b.textContent=on?'Fit to screen':base;
   });
 });
+</script>
+<script>
+(function(){
+  var boxes=[].slice.call(document.querySelectorAll('.pack input')),out=document.getElementById('packcount');
+  function load(){try{return JSON.parse(localStorage.getItem('stecoahPack')||'{}')}catch(e){return {}}}
+  function save(st){try{localStorage.setItem('stecoahPack',JSON.stringify(st))}catch(e){}}
+  var st=load();
+  function count(){var c=boxes.filter(function(b){return b.checked}).length;out.textContent=c+' of '+boxes.length+' packed';}
+  boxes.forEach(function(b){b.checked=!!st[b.dataset.k];b.addEventListener('change',function(){st[b.dataset.k]=b.checked;save(st);count();});});
+  document.getElementById('packreset').addEventListener('click',function(){boxes.forEach(function(b){b.checked=false});st={};save(st);count();});
+  count();
+})();
 </script>
 </body></html>
